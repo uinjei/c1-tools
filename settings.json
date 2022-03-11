@@ -1,0 +1,25 @@
+{
+    "fdLocation": "./FD",
+    "bpoIds": [
+        "bcfe3ffa-30b2-4a80-80ff-3ffc97aa1756",
+        "8dc021c9-d634-4785-8ea9-9ce45e0951f7",
+        "a7173944-30ce-4d09-a389-22ae7c3971be",
+        "8bb03ba9-a222-492e-8b2e-e84224ce473e",
+        "4349b94a-fde9-4c5b-8271-c8b7954d659e",
+        "827d3820-6cba-4e17-968d-868624fdf898",
+        "Cybersecurity Maturity Assessment Svcs@0fa4db4e-13a4-4da8-a006-ccce86168a47",
+        "Cybersecurity Maturity Assessment Svcs@18e4b276-526d-4087-906f-53ac376ccbb8",
+        "Zoom Room Add-on Services OTC@8bb03ba9-a222-492e-8b2e-e84224ce473e",
+        "Burstable GIX Zero Service@87ddaa2d-16a2-4808-a24f-8f909c54e318",
+        "Zoom Room Add-on Services OTC@a7173944-30ce-4d09-a389-22ae7c3971be"
+    ],
+    "outputFolder": "./generated-provide-payloads",
+    "prettify": true,
+    "allowRandomQty": false,
+    "includeAllSpo": true,
+    "offNet3rdPartyProvider": false,
+    "productOffersWithPlace": [
+        "Domestic Cross Connect",
+        "Last Mile A"
+    ]
+}
