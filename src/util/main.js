@@ -1,5 +1,7 @@
 import { Build } from "./buildOrderItem";
 import {
+    writeJSONFile,
+    readJSONFile,
     getLocaleValue,
     getMainSpo,
     getCurrency,
@@ -27,7 +29,7 @@ export class Main {
         const { spoPrice } = args;
         const priceCharacteristic = await Promise.all(spoPrice.map(price => {
             const __filename = util.generateJSONFileLocation(PRODUCT_PRICE_FOLDER, price.id)
-            return util.readJSONFile(__filename)
+            return readJSONFile(__filename)
                 .then(({priceType, priceCharacteristic}) => {
                     if (priceType === "RC") {
                         const paymentTiming = priceCharacteristic.find(result => result.name === "Payment timing");
@@ -62,7 +64,7 @@ export class Main {
     findMainSpoPrice = args => {
         const { mainSpoId } = args;
         const __filename = util.generateJSONFileLocation(PRODUCT_OFFERING_FOLDER, mainSpoId)
-        return util.readJSONFile(__filename)
+        return readJSONFile(__filename)
             .then(({productOfferingPrice}) => {
                 return {...args, spoPrice: productOfferingPrice}
             });
@@ -95,7 +97,7 @@ export class Main {
         return util.settings.bpoIds.map(id => {
             if (id.indexOf("@")>-1) id = id.split("@")[1];
             const __filename = util.generateJSONFileLocation(PRODUCT_OFFERING_FOLDER, id, util.settings.fdLocation)
-            return util.readJSONFile(__filename)
+            return readJSONFile(__filename)
                 .then(this.buildPayload)
                 .then(this.findMainSpoPrice)
                 .then(this.findPrice)
@@ -104,32 +106,29 @@ export class Main {
         })
     }
     
-    generate = () => {
-        
+    generate = async () => {
         util = new Util;
         build = new Build;
-            
-        util.getSettings().then(setting => {
-            Promise.all(this.getGeneratedPayloadList()).then((errors) => {
-    
-                const errorJSON = {}
-            
-                let errorCount = errors.filter(error => error).length
-            
-                console.log(`Successfully generated ${errors.length - errorCount} payloads`)
+        
+        return await util.getSettings().then(setting => {
+            return Promise.all(this.getGeneratedPayloadList()).then((errors) => {
+                const errorJSON = {};
+                let errorCount = errors.filter(error => error.code).length;
+                let report = {
+                    generatedCount: errors.length - errorCount,
+                };
+
                 if (errorCount > 0){
-                    console.log(`Error found in ${errorCount} file(s)`)
-            
+                    report.hasError = true;
                     errors.forEach((error, i) => {
                         if (error) {
                             console.log(error)
-                            errorJSON[setting.bpoIds[i]] = error.toString()
+                            errorJSON[setting.bpoIds[i]] = error.message;
                         }
                     })
-            
-                    Neutralino.filesystem.writeFile(`${util.settings.outputFolder}/error-${Date.now()}.json`, JSON.stringify(errorJSON));
+                    writeJSONFile(`${util.settings.outputFolder}/error-${Date.now()}.json`, errorJSON);
                 }
-                console.timeEnd("Generate Provide Payload")
+                return report;
             });
         });
     }

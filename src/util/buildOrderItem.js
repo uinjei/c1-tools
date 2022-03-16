@@ -1,4 +1,11 @@
-import { Util, getLocaleValue, PRODUCT_SPEC_FOLDER, PRODUCT_OFFERING_FOLDER, PRODUCT_OFFERING_GROUP_FOLDER } from "./util";
+import {
+    Util,
+    readJSONFile,
+    getLocaleValue,
+    PRODUCT_SPEC_FOLDER,
+    PRODUCT_OFFERING_FOLDER,
+    PRODUCT_OFFERING_GROUP_FOLDER
+} from "./util";
 
 const ROOT_TYPE = "ROOT_TYPE";
 const BUNDLE_PRODUCT_TYPE = "BUNDLE_PRODUCT_TYPE";
@@ -91,7 +98,7 @@ export class Build {
         const characteristic = [];
     
         const __filename = util.generateJSONFileLocation(PRODUCT_OFFERING_FOLDER, productOfferId);
-        const { prodSpecCharValueUse, productSpecification, productOfferingTerm, localizedName } = await util.readJSONFile(__filename);
+        const { prodSpecCharValueUse, productSpecification, productOfferingTerm, localizedName } = await readJSONFile(__filename);
     
         const place = util.settings.productOffersWithPlace.includes(getLocaleValue(localizedName)) ? generatePlace(): null;
     
@@ -124,7 +131,7 @@ export class Build {
     selectValueFromProductSpecCharValues = async (productSpecId, characteristic, onNetIndicator) => {
     
         const __filename = util.generateJSONFileLocation(PRODUCT_SPEC_FOLDER, productSpecId);
-        const productSpec = await util.readJSONFile(__filename);
+        const productSpec = await readJSONFile(__filename);
     
         const addedCharacteristics = characteristic.map(({ name }) => name);
     
@@ -209,7 +216,7 @@ export class Build {
             const { bundledGroupPolicy, groupOptionId, numberRelOfferLowerLimit, numberRelOfferUpperLimit } = productOffer;
     
             const __filename = util.generateJSONFileLocation(PRODUCT_OFFERING_GROUP_FOLDER, productOffer.bundledGroupPolicy.id, util.settings.fdLocation);
-            const offerGroup = await util.readJSONFile(__filename);
+            const offerGroup = await readJSONFile(__filename);
             const selectedOrders = this.selectProductsFromOfferGroup(offerGroup.productOfferingsInGroup,
                 numberRelOfferLowerLimit,
                 numberRelOfferUpperLimit,

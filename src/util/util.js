@@ -13,6 +13,12 @@ export const objectMap = (object, mapFn) => {
     }, {});
 }
 
+export const diff = (a,b) => Math.abs(a-b);
+
+export const readJSONFile = async (filename) => await Neutralino.filesystem.readFile(filename, { encoding: "utf8" }).then(toJSON);
+export const writeJSONFile = (filename, data) => Neutralino.filesystem.writeFile(filename,
+    JSON.stringify(data, null, 4));
+
 export const getLocaleValue = (contents) => contents.find(content => LOCALE === content.locale).value;
 export const getCurrency = (contents) => contents.defaultCurrency;
 export const getMainSpo = (contents) =>
@@ -28,19 +34,14 @@ export class Util {
         });
     }
 
-    readJSONFile = async (__filename) => await Neutralino.filesystem.readFile(__filename, { encoding: "utf8" }).then(toJSON)
-
     getSettings = async () => {
-        const settings = await this.readJSONFile('./settings.json');
+        const settings = await readJSONFile('./settings.json');
         return settings;
     } 
 
     generateJSONFileLocation = (type, id) => `${this.settings.fdLocation}/${type}/${id}.json`;
 
-    writeToJSONFile = ({name, currency, timing, proration, payload}) => 
-    {
-        Neutralino.filesystem.writeFile(`${this.settings.outputFolder}/${name}_${currency}_${timing}_${proration}.json`,
-        JSON.stringify(payload, null, this.settings.prettify?4:0))
-    };
+    writeToJSONFile = ({name, currency, timing, proration, payload}) => Neutralino.filesystem.writeFile(`${this.settings.outputFolder}/${name}_${currency}_${timing}_${proration}.json`,
+        JSON.stringify(payload, null, this.settings.prettify?4:0));
 
 }

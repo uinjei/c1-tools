@@ -16,8 +16,8 @@
     "@yaireo/tagify": "^4.9.8",
     "bulma": "^0.9.3",
     "heresy": "^1.0.4",
-    "neverland": "^4.3.3",
-    "router-component": "^0.16.2"
+    "router-component": "^0.16.2",
+    "toastify-js": "^1.11.2"
   },
   "devDependencies": {
     "@babel/core": "^7.17.5",

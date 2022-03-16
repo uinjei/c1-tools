@@ -6,8 +6,12 @@ import { Footer } from "./components/footer";
 import "./home";
 import "./editor";
 
+Neutralino.init();
+Neutralino.events.on("windowClose", () => Neutralino.app.exit());
+document.addEventListener('contextmenu', event => event.preventDefault());
+
 const App = {
-  includes: {Menu},
+  includes: {Menu, Footer},
   onclick(e) {
     if (e.target.id)
       this.main.current.setAttribute("active-page", e.target.id);
@@ -15,7 +19,7 @@ const App = {
   render() {
     this.html`
     <div class="columns">
-        <div class="column is-one-quarter is-gapless">
+        <div class="column is-one-fifth is-gapless">
           <Menu/>
         </div>
         <div class="column is-gapless">
@@ -27,6 +31,7 @@ const App = {
           </section>
         </div>
     </div>
+    <Footer/>
     `;
   }
 };

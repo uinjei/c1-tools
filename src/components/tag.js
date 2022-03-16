@@ -14,14 +14,19 @@ export const Tag = {
         dropdown: {
             closeOnSelect: true
         },
-        callbacks : {
-            add : () => this.data.handleAdd(tagify),  // callback when adding a tag
-            remove : () => this.data.handleRemove(tagify)   // callback when removing a tag
+        originalInputValueFormat: valuesArr => valuesArr.map(item => item.value).join(','),
+        hooks: {
+          beforePaste: this.data.handlePaste
         }
     });
     tagify.on('input', e => {
         this.data.handleInput(e);
     });
+
+    tagify.on('change', e => {
+        this.data.handleChange(e);
+    });
+
   },
   ondisconnected() {
     tagify.destroy();
@@ -34,13 +39,13 @@ export const Tag = {
   render() {
     const { label, value } = this.data;
     if (tagify) {
-      tagify.whitelist = this.data.value?this.data.value.map(id => id.value):[]
-      tagify.addTags(this.data.value?this.data.value:"");
+      tagify.removeAllTags();
+      tagify.whitelist = value;
+      tagify.addTags(value);
     }
     this.html`
         <label class="label">${label}</label>
-        <textarea class="tagify" placeholder="${label}">
-        </textarea>
+        <textarea class="tagify" placeholder="${label}"></textarea>
       `;
     }
   };
