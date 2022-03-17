@@ -20,3 +20,5 @@ generated-provide-payloads
 /.tmp
 
 /resources/js/app.js
+
+settings.json
