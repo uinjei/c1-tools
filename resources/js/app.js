@@ -6359,6 +6359,7 @@
       var tagInput = this.querySelector('.tagify');
       tagify = new Tagify(tagInput, {
         enforceWhitelist: true,
+        editTags: false,
         delimiters: null,
         dropdown: {
           closeOnSelect: true
@@ -6369,14 +6370,15 @@
           }).join(',');
         },
         hooks: {
-          beforePaste: this.data.handlePaste
+          beforePaste: this.data.handlePaste,
+          beforeRemoveTag: this.data.handleRemoveTag
         }
       });
       tagify.on('input', function (e) {
         _this.data.handleInput(e);
       });
-      tagify.on('change', function (e) {
-        _this.data.handleChange(e);
+      tagify.on('dropdown:select', function (e) {
+        _this.data.handleSelect(e);
       });
     },
     ondisconnected: function ondisconnected() {
@@ -6509,9 +6511,6 @@
       result[key] = mapFn(object[key]);
       return result;
     }, {});
-  };
-  var diff = function diff(a, b) {
-    return Math.abs(a - b);
   };
   var readJSONFile = /*#__PURE__*/function () {
     var _ref = _asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee(filename) {
@@ -7450,48 +7449,82 @@
       var _this4 = this;
 
       return new Promise(function (resolve, reject) {
-        data.tagify.loading(true);
+        var bpoIdValue = _this4.data.bpoIds.value;
+        var tagify = data.tagify,
+            pastedText = data.pastedText;
+
+        if (bpoIdValue.includes(pastedText)) {
+          _showToast("BPO with id: ".concat(pastedText, " already added"));
+
+          reject();
+          return;
+        }
         var dir = "".concat(_this4.data.fdLocation.value, "\\").concat(PRODUCT_OFFERING_FOLDER);
-        util.readJSONFile("".concat(dir, "\\").concat(data.pastedText, ".json")).then(function (offer) {
+        tagify.loading(true);
+        readJSONFile("".concat(dir, "\\").concat(pastedText, ".json")).then(function (offer) {
           if (offer.isBundle) {
-            data.tagify.whitelist = [offer.id];
+            tagify.whitelist = [offer.id];
+            bpoIdValue.push(offer.id);
+            _this4.data.bpoIds = _objectSpread(_objectSpread({}, _this4.bpoIds), {}, {
+              value: bpoIdValue
+            });
+
+            _saveSettings(_this4.data);
+
             resolve();
           } else {
-            _showToast("BPO with id: ".concat(data.pastedText, " not found"));
+            _showToast("BPO with id: ".concat(pastedText, " not found"));
 
             reject();
           }
         })["catch"](function (error) {
-          _showToast("BPO with id: ".concat(data.pastedText, " not found"));
+          _showToast("BPO with id: ".concat(pastedText, " not found"));
 
           reject();
         });
-        data.tagify.loading(false);
+        tagify.loading(false);
       });
     },
-    onBpoIdChange: function onBpoIdChange(e) {
-      var tagifyValue = e.detail.value.split(",");
+    onBpoIdSelect: function onBpoIdSelect(e) {
+      var bpoIdValue = this.data.bpoIds.value;
+      bpoIdValue.push(e.detail.data.value);
+      this.data.bpoIds = _objectSpread(_objectSpread({}, this.bpoIds), {}, {
+        value: bpoIdValue
+      });
 
-      if (diff(tagifyValue.length, this.data.bpoIds.value.length) === 1) {
-        this.data.bpoIds = _objectSpread(_objectSpread({}, this.bpoIds), {}, {
-          value: tagifyValue
-        });
+      _saveSettings(this.data);
+    },
+    onRemoveTag: function onRemoveTag(tags) {
+      var _this5 = this;
 
-        _saveSettings(this.data);
-      }
+      return new Promise(function (resolve, reject) {
+        if (tags[0].idx === -1) {
+          reject();
+        } else {
+          var bpoIdValue = _this5.data.bpoIds.value;
+          bpoIdValue.splice(tags[0].idx, 1);
+          _this5.data.bpoIds = _objectSpread(_objectSpread({}, _this5.bpoIds), {}, {
+            value: bpoIdValue
+          });
+
+          _saveSettings(_this5.data);
+
+          resolve();
+        }
+      });
     },
     onOutputFolderClick: function onOutputFolderClick() {
-      var _this5 = this;
+      var _this6 = this;
 
       Neutralino.os.showFolderDialog('Select Directory').then(function (directory) {
         if (directory !== "") {
-          _this5.data = _objectSpread(_objectSpread({}, _this5.data), {}, {
-            outputFolder: _objectSpread(_objectSpread({}, _this5.data.outputFolder), {}, {
+          _this6.data = _objectSpread(_objectSpread({}, _this6.data), {}, {
+            outputFolder: _objectSpread(_objectSpread({}, _this6.data.outputFolder), {}, {
               value: directory
             })
           });
 
-          _saveSettings(_this5.data);
+          _saveSettings(_this6.data);
         }
       });
     },
@@ -7539,17 +7572,20 @@
       });
     },
     render: function render() {
-      var _this6 = this;
+      var _this7 = this;
 
       this.html(_templateObject$2 || (_templateObject$2 = _taggedTemplateLiteral(["\n    <div class=\"container\">\n      <div class=\"content\">\n          <h3>Payload Generator</h3>\n          <div class=\"field\">\n            <Tag data=\"", "\"\n            />\n          </div>\n          <div class=\"field\">\n            <File data=\"", "\"/>\n          </div>\n          <div class=\"field\">\n            <File data=\"", "\"/>\n          </div>\n          <div class=\"field\">\n            <Checkbox data=\"", "\"/>\n          </div>\n          <div class=\"field\">\n            <Checkbox data=\"", "\"/>\n          </div>\n          <div class=\"field\">\n            <Checkbox data=\"", "\"/>\n          </div>\n          <div class=\"field\">\n            <Checkbox data=\"", "\"/>\n          </div>\n          <div class=\"field\">\n            <Textfield data=\"", "\"/>\n          </div>\n          <button class=\"button is-primary\" onclick=\"", "\">Generate</button>\n      </div>\n    </div>\n    "])), _objectSpread(_objectSpread({}, this.data.bpoIds), {}, {
         handlePaste: function handlePaste(clipboardEvent, data) {
-          return _this6.onBpoIdPaste(data);
+          return _this7.onBpoIdPaste(data);
         },
-        handleChange: function handleChange(e) {
-          return _this6.onBpoIdChange(e);
+        handleSelect: function handleSelect(e) {
+          return _this7.onBpoIdSelect(e);
+        },
+        handleRemoveTag: function handleRemoveTag(tags) {
+          return _this7.onRemoveTag(tags);
         }
       }), this.data.fdLocation, this.data.outputFolder, this.data.prettify, this.data.allowRandomQty, this.data.includeAllSpo, this.data.offNet3rdPartyProvider, this.data.productOffersWithPlace, function (e) {
-        return _this6.onGenerateClick(e);
+        return _this7.onGenerateClick(e);
       });
     }
   };

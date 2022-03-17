@@ -10,21 +10,24 @@ export const Tag = {
     const tagInput = this.querySelector('.tagify');
     tagify = new Tagify(tagInput, {
         enforceWhitelist: true,
+        editTags: false,
         delimiters: null,
         dropdown: {
             closeOnSelect: true
         },
         originalInputValueFormat: valuesArr => valuesArr.map(item => item.value).join(','),
         hooks: {
-          beforePaste: this.data.handlePaste
+          beforePaste: this.data.handlePaste,
+          beforeRemoveTag: this.data.handleRemoveTag
+
         }
     });
     tagify.on('input', e => {
         this.data.handleInput(e);
     });
 
-    tagify.on('change', e => {
-        this.data.handleChange(e);
+    tagify.on('dropdown:select', e => {
+        this.data.handleSelect(e);
     });
 
   },

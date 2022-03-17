@@ -132,29 +132,51 @@ export const Home = {
   },
   onBpoIdPaste(data) {
     return new Promise((resolve, reject) => {
-      data.tagify.loading(true);
+      const bpoIdValue = this.data.bpoIds.value;
+      const { tagify, pastedText } = data;
+      if (bpoIdValue.includes(pastedText)) {
+        _showToast(`BPO with id: ${pastedText} already added`);
+        reject();
+        return;
+      };
       const dir = `${this.data.fdLocation.value}\\${PRODUCT_OFFERING_FOLDER}`;
-      util.readJSONFile(`${dir}\\${data.pastedText}.json`).then(offer => {
+      tagify.loading(true);
+      readJSONFile(`${dir}\\${pastedText}.json`).then(offer => {
         if (offer.isBundle) {
-          data.tagify.whitelist = [offer.id];
+          tagify.whitelist = [offer.id];
+          bpoIdValue.push(offer.id);
+          this.data.bpoIds = {...this.bpoIds, value: bpoIdValue};
+          _saveSettings(this.data);
           resolve();
         } else {
-          _showToast(`BPO with id: ${data.pastedText} not found`);
+          _showToast(`BPO with id: ${pastedText} not found`);
           reject();
         }
       }).catch(error => {
-        _showToast(`BPO with id: ${data.pastedText} not found`);
+        _showToast(`BPO with id: ${pastedText} not found`);
         reject();
       });
-      data.tagify.loading(false);
+      tagify.loading(false);
     })
   },
-  onBpoIdChange(e) {
-    const tagifyValue = e.detail.value.split(",");
-    if (diff(tagifyValue.length, this.data.bpoIds.value.length)===1) {
-      this.data.bpoIds = {...this.bpoIds, value: tagifyValue};
-      _saveSettings(this.data);
-    }
+  onBpoIdSelect(e) {
+    const bpoIdValue = this.data.bpoIds.value;
+    bpoIdValue.push(e.detail.data.value);
+    this.data.bpoIds = {...this.bpoIds, value: bpoIdValue};
+    _saveSettings(this.data);
+  },
+  onRemoveTag(tags) {
+    return new Promise((resolve, reject) => {
+      if (tags[0].idx===-1) {
+        reject();
+      } else {
+        const bpoIdValue = this.data.bpoIds.value;
+        bpoIdValue.splice(tags[0].idx, 1);
+        this.data.bpoIds = {...this.bpoIds, value: bpoIdValue};
+        _saveSettings(this.data);
+        resolve();
+      }
+    });
   },
   onOutputFolderClick() {
     Neutralino.os.showFolderDialog('Select Directory').then(directory => {
@@ -200,7 +222,8 @@ export const Home = {
             <Tag data="${{
               ...this.data.bpoIds,
               handlePaste: (clipboardEvent, data) => this.onBpoIdPaste(data),
-              handleChange: e => this.onBpoIdChange(e)}}"
+              handleSelect: e => this.onBpoIdSelect(e),
+              handleRemoveTag: (tags) => this.onRemoveTag(tags)}}"
             />
           </div>
           <div class="field">

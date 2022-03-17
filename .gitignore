@@ -17,3 +17,6 @@ node_modules
 FD
 generated-provide-payloads
 
+/.tmp
+
+/resources/js/app.js
