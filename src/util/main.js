@@ -102,7 +102,7 @@ export class Main {
                 .then(this.findMainSpoPrice)
                 .then(this.findPrice)
                 .then(util.writeToJSONFile)
-                .catch(error => error)
+                .catch(error => error);
         })
     }
     
@@ -113,7 +113,7 @@ export class Main {
         return await util.getSettings().then(setting => {
             return Promise.all(this.getGeneratedPayloadList()).then((errors) => {
                 const errorJSON = {};
-                let errorCount = errors.filter(error => error.code).length;
+                let errorCount = errors.filter(error => error.code||error.stack).length;
                 let report = {
                     generatedCount: errors.length - errorCount,
                 };
@@ -122,11 +122,12 @@ export class Main {
                     report.hasError = true;
                     errors.forEach((error, i) => {
                         if (error) {
-                            console.log(error)
-                            errorJSON[setting.bpoIds[i]] = error.message;
+                            if (error.code)
+                                Neutralino.debug.log(error.message, 'ERROR');
+                            else if (error.stack)
+                                Neutralino.debug.log(JSON.stringify({message: error.message, stack: error.stack},0,4), 'ERROR');
                         }
                     })
-                    writeJSONFile(`${util.settings.outputFolder}/error-${Date.now()}.json`, errorJSON);
                 }
                 return report;
             });

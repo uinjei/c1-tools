@@ -15,7 +15,8 @@
   "nativeAllowList": [
     "app.*",
     "os.*",
-    "filesystem.*"
+    "filesystem.*",
+    "debug.*"
   ],
   "globalVariables": {
     "TEST1": "Hello",
@@ -50,8 +51,11 @@
       "globalVariables": {
         "TEST": "Test value browser"
       },
-      "nativeBlockList": [
-        "filesystem.*"
+      "nativeAllowList": [
+        "app.*",
+        "os.*",
+        "filesystem.*",
+        "debug.*"
       ]
     },
     "cloud": {

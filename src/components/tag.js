@@ -15,6 +15,8 @@ export const Tag = {
         dropdown: {
             closeOnSelect: true
         },
+        skipInvalid: true,
+        backspace: false,
         originalInputValueFormat: valuesArr => valuesArr.map(item => item.value).join(','),
         hooks: {
           beforePaste: this.data.handlePaste,
@@ -25,7 +27,7 @@ export const Tag = {
     tagify.on('input', e => {
         this.data.handleInput(e);
     });
-
+    
     tagify.on('dropdown:select', e => {
         this.data.handleSelect(e);
     });
