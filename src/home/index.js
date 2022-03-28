@@ -19,16 +19,19 @@ const _saveSettings = data => {
       return prop.value;
     });
     writeJSONFile("./settings.json", settingsData).then(data => {
-      _showToast("Settings saved");
+      _showToast("Settings saved", 'info');
     });
 }
 
-const _showToast = (text) => {
+const _showToast = (text, type) => {
+  const notifType = {
+    info: '#00c4a7',
+    error: '#f14668'
+  }
   Toastify({
     text: text,
-    className: "info",
     style: {
-      background: "#00c4a7",
+      background: notifType[type],
     }
   }).showToast();
 }
@@ -135,7 +138,7 @@ export const Home = {
       const bpoIdValue = this.data.bpoIds.value;
       const { tagify, pastedText } = data;
       if (bpoIdValue.includes(pastedText)) {
-        _showToast(`BPO with id: ${pastedText} already added`);
+        _showToast(`BPO with id: ${pastedText} already added`, 'error');
         reject();
         return;
       };
@@ -145,15 +148,15 @@ export const Home = {
         if (offer.isBundle) {
           tagify.whitelist = [offer.id];
           bpoIdValue.push(offer.id);
-          this.data.bpoIds = {...this.bpoIds, value: bpoIdValue};
+          this.data.bpoIds = {...this.data.bpoIds, value: bpoIdValue};
           _saveSettings(this.data);
           resolve();
         } else {
-          _showToast(`BPO with id: ${pastedText} not found`);
+          _showToast(`BPO with id: ${pastedText} not found`, 'error');
           reject();
         }
       }).catch(error => {
-        _showToast(`BPO with id: ${pastedText} not found`);
+        _showToast(`BPO with id: ${pastedText} not found`, 'error');
         reject();
       });
       tagify.loading(false);
@@ -162,7 +165,7 @@ export const Home = {
   onBpoIdSelect(e) {
     const bpoIdValue = this.data.bpoIds.value;
     bpoIdValue.push(e.detail.data.value);
-    this.data.bpoIds = {...this.bpoIds, value: bpoIdValue};
+    this.data.bpoIds = {...this.data.bpoIds, value: bpoIdValue};
     _saveSettings(this.data);
   },
   onRemoveTag(tags) {
@@ -172,7 +175,7 @@ export const Home = {
       } else {
         const bpoIdValue = this.data.bpoIds.value;
         bpoIdValue.splice(tags[0].idx, 1);
-        this.data.bpoIds = {...this.bpoIds, value: bpoIdValue};
+        this.data.bpoIds = {...this.data.bpoIds, value: bpoIdValue};
         _saveSettings(this.data);
         resolve();
       }
@@ -209,7 +212,8 @@ export const Home = {
   onGenerateClick(e) {
     e.target.setAttribute("class", "button is-primary is-loading");
     main.generate().then(report => {
-      _showToast(`Sucessfully generated ${report.generatedCount} payloads ${report.hasError?". see logs for errors.":""}`);
+      _showToast(`Sucessfully generated ${report.generatedCount} payloads ${report.hasError?". see neutralinojs.log for errors.":""}`,
+        report.hasError?'error':'info');
       e.target.setAttribute("class", "button is-primary");
     });
   },
