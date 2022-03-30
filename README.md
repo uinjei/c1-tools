@@ -6,7 +6,7 @@
 
 ![](https://raw.githubusercontent.com/uinjei/c1-tools/main/resources/icons/appIcon.png)
 
-###### Made with
+###### Made with ❤️
 
 ------------
 
