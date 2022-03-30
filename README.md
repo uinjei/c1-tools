@@ -58,10 +58,20 @@
 ------------
 ### Folder Structure
 
+###### Below is the structure of common files being updated.
+
 ```bash
-├── dist
+. . .
 ├── src
 │   ├── components
-│   └── 
-└──
+│   │   └── ...
+│   ├── <PAGE>
+│   │   └── ...
+│   ├── util
+│   │   └── ...
+│   ├── app.js
+│   ├── app.scss
+│   └── index.js
+└── neutralino.config.json
+. . .
 ```
