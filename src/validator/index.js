@@ -1,18 +1,165 @@
-import { define } from "heresy";
+import { define, html } from "heresy";
+import Ajv from "ajv"
+import jsonMap from "json-source-map";
+import CodeFlask from 'codeflask';
+import Prism from 'prismjs';
+import { capitalCase } from "change-case";
+
+import style from './style'
+import { readJSONFile, writeJSONFile, showToast } from "../util/util";
+import File from "../components/file";
+import Dropdown from "../components/dropdown";
+
+const _data = new WeakMap;
 
 export const Validator = {
+  includes: { File, Dropdown },
+  get data() { return _data.get(this) || {}; },
+  set data(data) {
+    _data.set(this, data);
+    this.render();
+  },
+  style() {
+    return style;
+  },
+  oninit() {
+    Neutralino.filesystem.readDirectory("./schemas").then(entries => {
+      entries.splice(0, 2); // remove ./ & ../
+      const schemas = entries.map(entry => {
+        const schema = entry.entry.split(".")[0];
+        return html`<option value="${schema}">${capitalCase(schema)}</option>`
+      });
+      this.data = {...this.data, schemas};
+    });
+  },
+  onOpenFileClick() {
+      Neutralino.os.showOpenDialog('Select File').then(file => {
+        if (file.length>0) {
+          const flask = new CodeFlask(this.querySelector('.code-editor'), { language: 'js', lineNumbers: true });
+
+          flask.addLanguage('js', Prism.languages['js']);
+          flask.onUpdate(fileData => {
+            try {
+              this.data = { ...this.data, fileData:JSON.parse(fileData)};
+              this.querySelector(".button").setAttribute("class", "button is-primary");
+            } catch (error) {
+              this.querySelector(".button").setAttribute("class", "button is-danger");
+            }
+          });           
+
+          readJSONFile(file[0]).then(fileData => {
+
+            this.data = {...this.data, filename: file[0]};
+
+            readJSONFile(`schemas/${this.data.schema}.json`).then(schemaData => {
+              
+              this.data = {...this.data, schemaData, fileData};
+
+              flask.updateCode(JSON.stringify(fileData, null, 2));
+
+              this.validate();
+              
+              this.querySelector(".notification").style.display = "block";
+              this.querySelector(".code-window").style.display = "block";
+              this.querySelector(".code-header").style.display = "flex";
+              this.querySelector(".code-editor").style.display = "block";
+              const hidden = this.querySelector(".hidden");
+              if (hidden) hidden.setAttribute("class","control");
+
+            }).catch(() => {
+              flask.updateCode("");
+              showToast("Please select type", 'error');
+            });
+
+          }).catch(() => {
+            flask.updateCode("");
+            showToast("Invalid JSON file", 'error');
+          });
+          
+        }
+      });
+  },
+  onTypeChange(e) {
+    this.data = {...this.data, schema: e.target.value};
+  },
+  revalidateOnClick() {
+    this.validate();
+    this.save();
+  },
+  save() {
+    writeJSONFile(this.data.filename, this.data.fileData);
+  },
+  validate() {
+    const result = jsonMap.stringify(this.data.fileData, null, 2);
+    const ajv = new Ajv({strict: false});
+    const validate = ajv.compile(this.data.schemaData);
+    const valid = validate(this.data.fileData);
+    if (!valid) {
+      validate.errors.forEach(error => {
+        this.data = {...this.data, error:""};
+        if (error.keyword==="required")
+          this.data = { ...this.data, error: `
+            ${error.message},
+            path: ${error.instancePath===""?"/":error.instancePath},
+            parameters: ${JSON.stringify(error.params, null, 2)}
+            at line ${result.pointers[`${error.instancePath===""?"/":error.instancePath}`].value.line+1}` };
+        else if (error.keyword==="additionalProperties")
+          this.data = { ...this.data, error: `
+            ${error.message},
+            path: ${error.instancePath===""?"/":error.instancePath},
+            parameters: ${JSON.stringify(error.params, null, 2)},
+            at line ${result.pointers[`${error.instancePath===""?"/":error.instancePath}${error.params.additionalProperty}`].value.line+1}` };
+        else
+          this.data = { ...this.data, error: 
+            `${error.message},
+            path: ${error.instancePath===""?"/":error.instancePath},
+            parameters: ${JSON.stringify(error.params, null, 2)}
+            at line ${result.pointers[error.instancePath].value.line+1}` };
+      });
+      this.querySelector(".notification").setAttribute("class", "notification is-danger");
+    } else {
+      this.data = { ...this.data, error: "JSON File is valid" };
+      this.querySelector(".notification").setAttribute("class", "notification is-primary");
+    }
+  },
   render() {
+      const { error, filename, schemas } = this.data;
+
       this.html`
       <div class="container">
         <div class="content">
             <h3>Json Validator</h3>
             <p>
-              Validator
+              Choose file and type to validate
             </p>
+
+            <div class="field is-grouped">
+              <p class="control">
+                <File data="${{label: 'Select file', handleClick: () => this.onOpenFileClick()}}"/>
+              </p>
+              <p class="control">
+                <Dropdown data="${{label:'Select type', values: schemas, handleChange: (e) => this.onTypeChange(e)}}"/>
+              </p>
+
+              <p class="control hidden">
+                <button class="button is-primary" onclick="${() => this.revalidateOnClick()}">Revalidate</button>
+              </p>
+            </div>
+
+            <div class="notification">
+              ${error}
+            </div>
+            <div class="code-window">
+              <div class="code-header">
+                  ${filename}
+              </div>
+              <div class="code-editor"></div>
+            </div>
         </div>
       </div>
       `;
+
     }
   };
   
-define('Validator', Validator);
+define('ValidatorC1T', Validator);

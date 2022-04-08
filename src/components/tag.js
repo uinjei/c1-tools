@@ -1,11 +1,10 @@
-import { define } from "heresy";
 import Tagify from "@yaireo/tagify";
 
 const _data = new WeakMap;
 
 let tagify = null;
 
-export const Tag = {
+export default {
   onconnected() {
     const tagInput = this.querySelector('.tagify');
     tagify = new Tagify(tagInput, {
@@ -51,8 +50,6 @@ export const Tag = {
     this.html`
         <label class="label">${label}</label>
         <textarea class="tagify" placeholder="${label}"></textarea>
-      `;
-    }
-  };
-  
-define('Tag', Tag);
+    `;
+  }
+}

@@ -1,11 +1,13 @@
 import { define, render, html } from "heresy"
 import "router-component";
-import "./app.scss";
-import { Menu } from "./components/menu";
-import { Footer } from "./components/footer";
+
+import Menu from "./components/menu";
+import Footer from "./components/footer";
 import "./home";
 import "./editor";
 import "./validator";
+
+import "./app.scss";
 
 Neutralino.init();
 Neutralino.events.on("windowClose", () => Neutralino.app.exit());
@@ -27,9 +29,9 @@ const App = {
           <div class="column is-gapless">
             <section class="section">
               <router-component>
-                  <validator-heresy path="validator"></validator-heresy>
-                  <editor-heresy path="editor"></editor-heresy>
-                  <home-heresy path=".*"></home-heresy>
+                  <validator-c1t path="validator"></validator-c1t>
+                  <editor-c1t path="editor"></editor-c1t>
+                  <home-c1t path=".*"></home-c1t>
               </router-component>
             </section>
           </div>
@@ -40,5 +42,5 @@ const App = {
   }
 };
 
-define('App', App);
-render(document.body, html`<App id="app"/>`);
+define('AppC1T', App);
+render(document.body, html`<AppC1T/>`);

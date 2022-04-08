@@ -24,7 +24,7 @@ import {
 
 let  util, build;
 
-export class Main {
+export default class {
     findPrice = async args => {
         const { spoPrice } = args;
         const priceCharacteristic = await Promise.all(spoPrice.map(price => {

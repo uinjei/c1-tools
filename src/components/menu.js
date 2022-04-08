@@ -1,6 +1,4 @@
-import { define } from "heresy";
-
-export const Menu = {
+export default {
     onclick(e) {
       const children = e.target.parentNode.parentNode.children;
       for (let i = 0; i < children.length; i++) {
@@ -10,15 +8,13 @@ export const Menu = {
     },
     render() {
       this.html`
-        <aside class="menu">
-            <ul class="menu-list">
-            <li><a onclick="${this.onclick}" class="is-active" href="/">Payload Generator</a></li>
-            <li><a onclick="${this.onclick}" href="editor">Edit Payload</a></li>
-            <li><a onclick="${this.onclick}" href="validator">Validator</a></li>
-            </ul>
-        </aside>
-      `;
-    }
-  };
-  
-  define('Menu', Menu);
+      <aside class="menu">
+          <ul class="menu-list">
+          <li><a onclick="${this.onclick}" class="is-active" href="/">Payload Generator</a></li>
+          <li><a onclick="${this.onclick}" href="editor">Edit Payload</a></li>
+          <li><a onclick="${this.onclick}" href="validator">Validator</a></li>
+          </ul>
+      </aside>
+    `;
+  }
+}  

@@ -1,4 +1,19 @@
+import Toastify from 'toastify-js';
+
 const toJSON = data => JSON.parse(data)
+
+export const showToast = (text, type) => {
+    const notifType = {
+        info: '#00c4a7',
+        error: '#f14668'
+    }
+    Toastify({
+        text: text,
+        style: {
+        background: notifType[type],
+        }
+    }).showToast();
+}
 
 export const PRODUCT_OFFERING_FOLDER = "productOffering";
 export const PRODUCT_SPEC_FOLDER = "productSpecification";

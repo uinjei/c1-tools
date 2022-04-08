@@ -1,0 +1,164 @@
+{
+    "type": "object",
+    "properties": {
+      "bundledProductSpecification": {
+        "type": "array",
+        "items": {
+            "type": "string",
+            "additionalProperties": false
+        },
+        "uniqueItems": true
+      },
+      "description": {
+        "type": "array",
+        "items": {
+            "type": "object",
+            "properties": {
+                "locale": {"type": "string"},
+                "value": {"type": "string"}
+            },
+            "additionalProperties": false,
+            "required": ["locale", "value"]
+        },
+        "uniqueItems": true
+      },
+      "localizedName": {
+        "type": "array",
+        "items": {
+            "type": "object",
+            "properties": {
+                "locale": {"type": "string"},
+                "value": {"type": "string"}
+            },
+            "additionalProperties": false,
+            "required": ["locale", "value"]
+        },
+        "uniqueItems": true
+      },
+      "name": {
+        "type": "array",
+        "items": {
+            "type": "object",
+            "properties": {
+                "locale": {"type": "string"},
+                "value": {"type": "string"}
+            },
+            "additionalProperties": false,
+            "required": ["locale", "value"]
+        },
+        "uniqueItems": true
+      },
+      "expiredForSales": {"type": "boolean"},
+      "externalId": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+              "id": {"type": "string"},
+              "owner": {"type": "string"},
+              "uid": {"type": "string"}
+          },
+          "additionalProperties": false,
+          "required": ["id", "owner", "uid"]
+        }
+      },
+      "productSpecCharacteristic": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+            "allowProductOfferingOverride": {"type": "boolean"},
+            "configurable": {"type": "boolean"},
+            "description": {
+              "type": "array",
+              "items": {
+                  "type": "object",
+                  "properties": {
+                      "locale": {"type": "string"},
+                      "value": {"type": "string"}
+                  },
+                  "additionalProperties": false,
+                  "required": ["locale", "value"]
+              },
+              "uniqueItems": true
+            },
+            "expiredForSales": {"type": "boolean"},
+            "localizedName": {
+              "type": "array",
+              "items": {
+                  "type": "object",
+                  "properties": {
+                      "locale": {"type": "string"},
+                      "value": {"type": "string"}
+                  },
+                  "additionalProperties": false,
+                  "required": ["locale", "value"]
+              },
+              "uniqueItems": true
+            },
+            "maxCardinality": {"type": "integer"},
+            "minCardinality": {"type": "integer"},
+            "name": {"type": "string"},
+            "valueType": {"type": "string"},
+            "variantGroupCharacteristic": {"type": "boolean"},
+            "productSpecCharacteristicValue": {
+              "type": "array",
+              "items": {
+                  "type": "object",
+                  "properties": {
+                      "default" : {"type":"boolean"},
+                      "expiredForSales": {"type": "boolean"},
+                      "localizedValue": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "locale": {"type": "string"},
+                                "value": {"type": "string"}
+                            },
+                            "additionalProperties": false,
+                            "required": ["locale", "value"]
+                        },
+                        "uniqueItems": true
+                      },
+                      "value":{"type":"string"},
+                      "sourceElementRef": {
+                        "type": "array",
+                        "uniqueItems": true
+                      }
+                  },
+                  "additionalProperties": false,
+                  "required": ["default","expiredForSales","localizedValue","value","sourceElementRef"]
+              },
+              "uniqueItems": true
+            }
+          },
+          "additionalProperties": false,
+          "required": ["allowProductOfferingOverride", "configurable", "description","expiredForSales","localizedName","maxCardinality",
+            "minCardinality","name","valueType","variantGroupCharacteristic","productSpecCharacteristicValue"]
+        },
+        "uniqueItems": true
+      },
+      "isBundle": {"type": "boolean"},
+      "productSpecType": {
+        "type": "object",
+        "properties": {
+            "id": {"type": "string"}
+        },
+        "additionalProperties": false,
+        "required": ["id"]
+      },
+      "productSpecificationRelationship": {
+        "type": "array",
+        "uniqueItems": true
+      },
+      "restriction": {
+        "type": "array",
+        "uniqueItems": true
+      },
+      "id": {"type": "string"}
+    },
+    "required": ["bundledProductSpecification", "expiredForSales", "externalId", "isBundle","productSpecType",
+      "productSpecificationRelationship","restriction","id"],
+    "additionalProperties": false
+  }

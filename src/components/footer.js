@@ -1,6 +1,4 @@
-import { define } from "heresy";
-
-export const Footer = {
+export default {
   render() {
     this.html`
       <footer class="footer">
@@ -8,8 +6,6 @@ export const Footer = {
             <p>Made with ❤️</p>
         </div>
       </footer>
-      `;
-    }
-  };
-  
-define('Footer', Footer);
+    `;
+  }
+}

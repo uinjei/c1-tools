@@ -1,13 +1,13 @@
 import { define } from "heresy";
 import Toastify from 'toastify-js'
 
-import { Textfield } from "../components/textfield";
-import { Tag } from "../components/tag";
-import { File } from "../components/file";
-import { Checkbox } from "../components/checkbox";
+import Textfield from "../components/textfield";
+import Tag from "../components/tag";
+import Directory from "../components/directory";
+import Checkbox from "../components/checkbox";
 
-import { Util, objectMap, PRODUCT_OFFERING_FOLDER, writeJSONFile, readJSONFile, diff } from "../util/util";
-import { Main } from "../util/main";
+import { Util, objectMap, PRODUCT_OFFERING_FOLDER, writeJSONFile, readJSONFile, showToast } from "../util/util";
+import Main from "../util/main";
 
 const _data = new WeakMap;
 
@@ -19,25 +19,12 @@ const _saveSettings = data => {
       return prop.value;
     });
     writeJSONFile("./settings.json", settingsData).then(data => {
-      _showToast("Settings saved", 'info');
+      showToast("Settings saved", 'info');
     });
 }
 
-const _showToast = (text, type) => {
-  const notifType = {
-    info: '#00c4a7',
-    error: '#f14668'
-  }
-  Toastify({
-    text: text,
-    style: {
-      background: notifType[type],
-    }
-  }).showToast();
-}
-
 export const Home = {
-  includes: { Textfield, Tag, File, Checkbox },
+  includes: { Textfield, Tag, Directory, Checkbox },
   get data() { return _data.get(this) || {}; },
   set data(data) {
     _data.set(this, data);
@@ -138,7 +125,7 @@ export const Home = {
       const bpoIdValue = this.data.bpoIds.value;
       const { tagify, pastedText } = data;
       if (bpoIdValue.includes(pastedText)) {
-        _showToast(`BPO with id: ${pastedText} already added`, 'error');
+        showToast(`BPO with id: ${pastedText} already added`, 'error');
         reject();
         return;
       };
@@ -152,11 +139,11 @@ export const Home = {
           _saveSettings(this.data);
           resolve();
         } else {
-          _showToast(`BPO with id: ${pastedText} not found`, 'error');
+          showToast(`BPO with id: ${pastedText} not found`, 'error');
           reject();
         }
       }).catch(error => {
-        _showToast(`BPO with id: ${pastedText} not found`, 'error');
+        showToast(`BPO with id: ${pastedText} not found`, 'error');
         reject();
       });
       tagify.loading(false);
@@ -212,7 +199,7 @@ export const Home = {
   onGenerateClick(e) {
     e.target.setAttribute("class", "button is-primary is-loading");
     main.generate().then(report => {
-      _showToast(`Sucessfully generated ${report.generatedCount} payloads ${report.hasError?". see neutralinojs.log for errors.":""}`,
+      showToast(`Sucessfully generated ${report.generatedCount} payloads ${report.hasError?". see neutralinojs.log for errors.":""}`,
         report.hasError?'error':'info');
       e.target.setAttribute("class", "button is-primary");
     });
@@ -221,41 +208,41 @@ export const Home = {
     this.html`
     <div class="container">
       <div class="content">
-          <h3>Payload Generator</h3>
-          <div class="field">
-            <Tag data="${{
-              ...this.data.bpoIds,
-              handlePaste: (clipboardEvent, data) => this.onBpoIdPaste(data),
-              handleSelect: e => this.onBpoIdSelect(e),
-              handleRemoveTag: (tags) => this.onRemoveTag(tags)}}"
-            />
-          </div>
-          <div class="field">
-            <File data="${this.data.fdLocation}"/>
-          </div>
-          <div class="field">
-            <File data="${this.data.outputFolder}"/>
-          </div>
-          <div class="field">
-            <Checkbox data="${this.data.prettify}"/>
-          </div>
-          <div class="field">
-            <Checkbox data="${this.data.allowRandomQty}"/>
-          </div>
-          <div class="field">
-            <Checkbox data="${this.data.includeAllSpo}"/>
-          </div>
-          <div class="field">
-            <Checkbox data="${this.data.offNet3rdPartyProvider}"/>
-          </div>
-          <div class="field">
-            <Textfield data="${this.data.productOffersWithPlace}"/>
-          </div>
-          <button class="button is-primary" onclick="${(e) => this.onGenerateClick(e)}">Generate</button>
+        <h3>Payload Generator</h3>
+        <div class="field">
+          <Tag data="${{
+            ...this.data.bpoIds,
+            handlePaste: (clipboardEvent, data) => this.onBpoIdPaste(data),
+            handleSelect: e => this.onBpoIdSelect(e),
+            handleRemoveTag: (tags) => this.onRemoveTag(tags)}}"
+          />
+        </div>
+        <div class="field">
+          <Directory data="${this.data.fdLocation}"/>
+        </div>
+        <div class="field">
+          <Directory data="${this.data.outputFolder}"/>
+        </div>
+        <div class="field">
+          <Checkbox data="${this.data.prettify}"/>
+        </div>
+        <div class="field">
+          <Checkbox data="${this.data.allowRandomQty}"/>
+        </div>
+        <div class="field">
+          <Checkbox data="${this.data.includeAllSpo}"/>
+        </div>
+        <div class="field">
+          <Checkbox data="${this.data.offNet3rdPartyProvider}"/>
+        </div>
+        <div class="field">
+          <Textfield data="${this.data.productOffersWithPlace}"/>
+        </div>
+        <button class="button is-primary" onclick="${(e) => this.onGenerateClick(e)}">Generate</button>
       </div>
     </div>
     `;
   }
   };
 
-define('Home', Home);
+define('HomeC1T', Home);

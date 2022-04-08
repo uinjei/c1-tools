@@ -1,8 +1,6 @@
-import { define } from "heresy";
-
 const _data = new WeakMap;
 
-export const Textfield = {
+export default {
   get data() { return _data.get(this) || {}; },
   set data(data) {
     _data.set(this, data);
@@ -15,8 +13,6 @@ export const Textfield = {
       <div class="control">
           <input class="input" type="text" placeholder="Text input" value="${value}" onchange="${handleChange}"/>
       </div>
-      `;
-    }
-  };
-  
-define('Textfield', Textfield);
+    `;
+  }
+}

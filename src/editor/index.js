@@ -15,4 +15,4 @@ export const Editor = {
     }
   };
   
-define('Editor', Editor);
+define('EditorC1T', Editor);
