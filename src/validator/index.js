@@ -95,6 +95,8 @@ export const Validator = {
     const validate = ajv.compile(this.data.schemaData);
     const valid = validate(this.data.fileData);
     if (!valid) {
+      console.log("error", validate.errors);
+      console.log("res", result.pointers);
       validate.errors.forEach(error => {
         this.data = {...this.data, error:""};
         if (error.keyword==="required")
@@ -103,12 +105,6 @@ export const Validator = {
             path: ${error.instancePath===""?"/":error.instancePath},
             parameters: ${JSON.stringify(error.params, null, 2)}
             at line ${result.pointers[`${error.instancePath===""?"/":error.instancePath}`].value.line+1}` };
-        else if (error.keyword==="additionalProperties")
-          this.data = { ...this.data, error: `
-            ${error.message},
-            path: ${error.instancePath===""?"/":error.instancePath},
-            parameters: ${JSON.stringify(error.params, null, 2)},
-            at line ${result.pointers[`${error.instancePath===""?"/":error.instancePath}${error.params.additionalProperty}`].value.line+1}` };
         else
           this.data = { ...this.data, error: 
             `${error.message},
