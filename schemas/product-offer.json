@@ -1,0 +1,285 @@
+{
+    "type": "object",
+    "properties": {
+		"attachment": {
+			"type": "array",
+			"uniqueItems": true
+		},
+		"bundledProdOfferGroupOption": {
+			"type": "array",
+			"uniqueItems": true
+		},
+		"bundledProductOffering": {
+			"type": "array",
+			"uniqueItems": true
+		},
+		"currency": {
+			"type": "object",
+			"properties": {
+				"defaultCurrency": {"type": "string"},
+				"currencies": {
+					"type": "array",
+					"items": {
+						"type": "string",
+						"additionalProperties": false
+					},
+					"uniqueItems": true
+				}
+			},
+			"additionalProperties": false,
+			"required": ["defaultCurrency", "currencies"]
+		},
+		"description": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"locale": {"type": "string"},
+					"value": {"type": "string"}
+				},
+				"additionalProperties": false,
+				"required": ["locale", "value"]
+			},
+			"uniqueItems": true
+		},
+		"excludedBundledProductSpec": {
+			"type": "array",
+			"uniqueItems": true
+		},
+		"externalId": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"id": {"type": "string"},
+					"owner": {"type": "string"},
+					"type": {"type": "string"},
+					"uid": {"type": "string", "format": "uuid"}
+				},
+				"additionalProperties": false,
+				"required": ["id", "owner", "type", "uid"]
+			},
+			"uniqueItems": true
+		},
+		"isBundle": {"type": "boolean"},
+		"localizedName": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"locale": {"type": "string"},
+					"value": {"type": "string"}
+				},
+				"additionalProperties": false,
+				"required": ["locale", "value"]
+			},
+			"uniqueItems": true
+		},
+		"mustBeBundled": {"type": "boolean"},
+		"name": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"locale": {"type": "string"},
+					"value": {"type": "string"}
+				},
+				"additionalProperties": false,
+				"required": ["locale", "value"]
+			},
+			"uniqueItems": true
+		},
+		"policy": {
+			"type": "array",
+			"uniqueItems": true
+		},
+		"primary": {"type": "boolean"},
+		"prodSpecCharValueUse": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"characteristicValue": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"default" : {"type":"boolean"},
+								"expiredForSales": {"type": "boolean"},
+								"localizedValue": {
+									"type": "array",
+									"items": {
+										"type": "object",
+										"properties": {
+											"locale": {"type": "string"},
+											"value": {"type": "string"}
+										},
+										"additionalProperties": false,
+										"required": ["locale", "value"]
+									},
+									"uniqueItems": true
+								},
+								"value":{"type":"string"}
+							},
+							"additionalProperties": false,
+							"required": ["default","expiredForSales","localizedValue","value"]
+						},
+						"uniqueItems": true
+					},
+					"name":{"type":"string"},
+					"productSpecification": {
+						"type": "object",
+						"properties": {
+							"id": {"type": "string", "format": "uuid"}
+						},
+						"additionalProperties": false,
+						"required": ["id"]
+					}
+				},
+				"additionalProperties": false,
+				"required": ["characteristicValue", "name", "productSpecification"]
+			},
+			"uniqueItems": true
+		},
+		"productOfferingCharacteristic": {
+			"type": "array",
+			"uniqueItems": true
+		},
+		"productOfferingCompositePrice": {
+			"type": "array",
+			"uniqueItems": true
+		},
+		"productOfferingPrice": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"id": {"type":"string", "format": "uuid"},
+					"isPublic": {"type":"boolean"},
+					"parameter": {"type": "array",
+						"uniqueItems": true
+					},
+					"price": {
+						"type": "array",
+						"uniqueItems": true
+					}
+				},
+				"additionalProperties": false,
+				"required": ["id", "isPublic"]
+			},
+			"uniqueItems": true
+		},
+		"productOfferingPriceGroup": {
+			"type": "array",
+			"uniqueItems": true
+		},
+		"productOfferingQualification": {
+			"type": "array",
+			"uniqueItems": true
+		},
+		"productOfferingTerm": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"default": {"type": "boolean"},
+					"attachment": {
+						"type": "array",
+						"uniqueItems": true
+					},
+					"description": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"locale": {"type": "string"},
+								"value": {"type": "string"}
+							},
+							"additionalProperties": false,
+							"required": ["locale", "value"]
+						},
+						"uniqueItems": true
+					},
+					"displayName": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"locale": {"type": "string"},
+								"value": {"type": "string"}
+							},
+							"additionalProperties": false,
+							"required": ["locale", "value"]
+						},
+						"uniqueItems": true
+					},
+					"duration": {
+						"type": "object",
+						"properties": {
+							"amount": {"type": "integer"},
+							"units": {"type": "string"}
+						},
+						"additionalProperties": false,
+        				"required": ["amount", "units"]
+					},
+					"expiredForSales": {"type": "boolean"},
+					"name": {"type": "string"},
+					"policy": {
+						"type": "object",
+						"properties": {
+							"id": {"type": "string", "format": "uuid"}
+						},
+						"additionalProperties": false,
+       					"required": ["id"]
+					},
+					"type": {"type": "string"}
+				},
+				"additionalProperties": false,
+				"required": ["default", "attachment", "description", "displayName", "duration", "expiredForSales",
+					"name", "policy", "type"]
+			},
+			"uniqueItems": true
+		},
+		"productOfferingType": {
+			"type": "object",
+			"properties": {
+				"id": {"type": "string", "format": "uuid"}
+			},
+			"additionalProperties": false,
+			   "required": ["id"]
+		},
+		"productSpecification": {
+			"type": "object",
+			"properties": {
+				"id": {"type": "string", "format": "uuid"}
+			},
+			"additionalProperties": false,
+			   "required": ["id"]
+		},
+		"relatedPartyRef": {
+			"type": "array",
+			"uniqueItems": true
+		},
+		"restriction": {
+			"type": "array",
+			"uniqueItems": true
+		},
+		"validFor": {
+			"type": "object",
+			"properties": {
+				"startDateTime": {
+					"type": "string", "format": "date-time"}
+			},
+			"additionalProperties": false,
+			   "required": ["startDateTime"]
+		},
+		"businessName": {"type": "string"},
+		"id": {"type": "string", "format": "uuid"}
+    },
+    "required": ["attachment", "bundledProdOfferGroupOption", "bundledProductOffering", "currency", "description",
+		"excludedBundledProductSpec", "externalId", "isBundle", "localizedName", "name", "policy", "primary",
+		"prodSpecCharValueUse", "productOfferingCharacteristic", "productOfferingCompositePrice","productOfferingPrice",
+		"productOfferingPriceGroup","productOfferingQualification","productOfferingTerm", "productOfferingType",
+		"productSpecification", "relatedPartyRef", "restriction", "validFor", "businessName", "id"],
+    "additionalProperties": false
+  }

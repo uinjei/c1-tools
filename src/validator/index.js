@@ -1,5 +1,6 @@
 import { define, html } from "heresy";
 import Ajv from "ajv"
+import addFormats from "ajv-formats"
 import jsonMap from "json-source-map";
 import CodeFlask from 'codeflask';
 import Prism from 'prismjs';
@@ -59,7 +60,6 @@ export const Validator = {
 
               this.validate();
               
-              this.querySelector(".notification").style.display = "block";
               this.querySelector(".code-window").style.display = "block";
               this.querySelector(".code-header").style.display = "flex";
               this.querySelector(".code-editor").style.display = "block";
@@ -91,32 +91,21 @@ export const Validator = {
   },
   validate() {
     const result = jsonMap.stringify(this.data.fileData, null, 2);
-    const ajv = new Ajv({strict: false});
+    const ajv = new Ajv({strict: false, allErrors: true});
+    addFormats(ajv, ["date-time", "uuid"]);
     const validate = ajv.compile(this.data.schemaData);
-    const valid = validate(this.data.fileData);
-    if (!valid) {
-      console.log("error", validate.errors);
-      console.log("res", result.pointers);
-      validate.errors.forEach(error => {
-        this.data = {...this.data, error:""};
-        if (error.keyword==="required")
-          this.data = { ...this.data, error: `
-            ${error.message},
-            path: ${error.instancePath===""?"/":error.instancePath},
-            parameters: ${JSON.stringify(error.params, null, 2)}
-            at line ${result.pointers[`${error.instancePath===""?"/":error.instancePath}`].value.line+1}` };
-        else
-          this.data = { ...this.data, error: 
-            `${error.message},
-            path: ${error.instancePath===""?"/":error.instancePath},
-            parameters: ${JSON.stringify(error.params, null, 2)}
-            at line ${result.pointers[error.instancePath].value.line+1}` };
-      });
-      this.querySelector(".notification").setAttribute("class", "notification is-danger");
-    } else {
-      this.data = { ...this.data, error: "JSON File is valid" };
-      this.querySelector(".notification").setAttribute("class", "notification is-primary");
+    validate(this.data.fileData);
+    this.data = {...this.data, error:""};
+    this.data = {
+      ...this.data,
+      error: validate.errors?validate.errors.map(error => {
+        return `${error.message},
+        path: ${error.instancePath===""?"/":error.instancePath},
+        parameters: ${JSON.stringify(error.params, null, 2)}
+        at line ${result.pointers[error.instancePath].value.line+1}`;
+      }):[]
     }
+    this.querySelector(".notification").style.display = "block";
   },
   render() {
       const { error, filename, schemas } = this.data;
@@ -142,9 +131,18 @@ export const Validator = {
               </p>
             </div>
 
-            <div class="notification">
-              ${error}
-            </div>
+            ${error&&error.length>0?
+            html`
+              <div class="notification is-danger">
+                ${error.map(err => html`<p>${err}</p>`)}
+              </div>`
+            :
+            html`
+              <div class="notification is-primary">
+                <p>JSON file is invalid</p>
+              </div>
+            `}
+
             <div class="code-window">
               <div class="code-header">
                   ${filename}

@@ -56,7 +56,7 @@
           "properties": {
               "id": {"type": "string"},
               "owner": {"type": "string"},
-              "uid": {"type": "string"}
+              "uid": {"type": "string", "format": "uuid"}
           },
           "additionalProperties": false,
           "required": ["id", "owner", "uid"]
@@ -143,7 +143,7 @@
       "productSpecType": {
         "type": "object",
         "properties": {
-            "id": {"type": "string"}
+            "id": {"type": "string", "format": "uuid"}
         },
         "additionalProperties": false,
         "required": ["id"]
@@ -156,7 +156,7 @@
         "type": "array",
         "uniqueItems": true
       },
-      "id": {"type": "string"}
+      "id": {"type": "string", "format": "uuid"}
     },
     "required": ["bundledProductSpecification", "expiredForSales", "externalId", "isBundle","productSpecType",
       "productSpecificationRelationship","restriction","id"],

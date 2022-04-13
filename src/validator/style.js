@@ -58,4 +58,8 @@ export default `
     .hidden {
         display: none !important;
     }
+
+    p {
+        margin-bottom: initial !important;
+    }
 `;
