@@ -100,7 +100,7 @@ export class Build {
         const __filename = util.generateJSONFileLocation(PRODUCT_OFFERING_FOLDER, productOfferId);
         const { prodSpecCharValueUse, productSpecification, productOfferingTerm, localizedName } = await readJSONFile(__filename);
     
-        const place = util.settings.productOffersWithPlace.includes(getLocaleValue(localizedName)) ? generatePlace(): null;
+        const place = util.settings.productOffersWithPlace.includes(getLocaleValue(localizedName)) ? this.generatePlace(): null;
     
     
         prodSpecCharValueUse.forEach(({ name, characteristicValue, valueType }) => {
